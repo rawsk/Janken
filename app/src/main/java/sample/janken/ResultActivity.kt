@@ -2,6 +2,7 @@ package sample.janken
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.preference.PreferenceManager
 import kotlinx.android.synthetic.main.activity_result.*
 
 class ResultActivity : AppCompatActivity() {
@@ -32,7 +33,8 @@ class ResultActivity : AppCompatActivity() {
             else -> gu
         }
 
-        val comHand = (Math.random() * 3).toInt()
+        // val comHand = (Math.random() * 3).toInt()
+        val comHand = getHand()
         when(comHand) {
             gu -> comHandImage.setImageResource(R.drawable.com_gu)
             choki -> comHandImage.setImageResource(R.drawable.com_choki)
@@ -47,5 +49,22 @@ class ResultActivity : AppCompatActivity() {
         }
 
         backButton.setOnClickListener { finish() }
+
+        saveData(myHand)
+    }
+
+    private fun saveData(myHand: Int) {
+        val pref = PreferenceManager.getDefaultSharedPreferences(this)
+        val gameCount = pref.getInt("GAME_COUNT", 1)
+
+        val editor = pref.edit()
+        editor.putInt("GAME_COUNT", gameCount+1)
+            .putInt("LAST_MY_HAND", myHand)
+            .apply()
+    }
+
+    private fun getHand(): Int {
+        val pref = PreferenceManager.getDefaultSharedPreferences(this)
+        return pref.getInt("LAST_MY_HAND", 0)
     }
 }

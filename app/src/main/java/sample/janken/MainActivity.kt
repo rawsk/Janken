@@ -1,11 +1,11 @@
 package sample.janken
 
-import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.view.View
-import android.widget.ImageButton
 import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.startActivity
 
 
 class MainActivity : AppCompatActivity() {
@@ -17,11 +17,21 @@ class MainActivity : AppCompatActivity() {
         gu.setOnClickListener { onJankenButtonTapped(it) }
         choki.setOnClickListener { onJankenButtonTapped(it) }
         pa.setOnClickListener { onJankenButtonTapped(it) }
+
+        val pref = PreferenceManager.getDefaultSharedPreferences(this)
+        val editor = pref.edit()
+        editor.clear().apply()
     }
 
-    fun onJankenButtonTapped(view: View?) {
-        val intent = Intent(this, ResultActivity::class.java)
-        intent.putExtra("MY_HAND", view?.id)
-        startActivity(intent)
+    override fun onStart() {
+        super.onStart()
+        val pref = PreferenceManager.getDefaultSharedPreferences(this)
+        val gameCount = pref.getInt("GAME_COUNT", 1)
+
+        gameCountLabel.text = gameCount.toString()
+    }
+
+    private fun onJankenButtonTapped(view: View?) {
+        startActivity<ResultActivity>("MY_HAND" to view?.id)
     }
 }
